@@ -1,0 +1,31 @@
+#!/bin/bash
+USERNAME=     # username on the computer
+AD_LOGIN=     # username on the active directory
+SERVER=       # the server that the user is using
+#
+if [[ -z "$USERNAME" || -z "$AD_LOGIN" || -z "$SERVER" ]]; then
+     echo "variables are not recorded"
+     sleep 50000
+     exit
+fi
+#
+touch /home/$USERNAME/scriptrdp.sh
+chmod 777 /home/$USERNAME/scriptrdp.sh
+sudo apt-get update
+sudo apt-get install freerdp2-x11 -y
+
+#create start script
+echo "xfreerdp /multimon /f /cert-ignore /u:$AD_LOGIN /d:lc /v:$SERVER" > /home/$USERNAME/scriptrdp.sh
+
+#create icon for start script
+touch /usr/share/applications/rdpsession.desktop
+a=/usr/share/applications/rdpsession.desktop
+echo "[Desktop Entry]" >> $a
+echo "Name=RDPsession" >> $a
+echo "Comment=connect to server RDP by FreeRDP" >> $a
+echo "Exec=/home/$USERNAME/scriptrdp.sh" >> $a
+echo "Terminal=false" >> $a
+echo "Type=Application" >> $a
+echo "NoDisplay=false" >> $a
+ln -s /usr/share/applications/rdpsession.desktop /home/$USERNAME/"Рабочий стол"/RDPSession.desktop
+chmod 777 /home/$USERNAME/"Рабочий стол"/RDPSession.desktop
